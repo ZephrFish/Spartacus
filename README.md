@@ -3,6 +3,12 @@
 
 # Spartacus DLL/COM Hijacking Toolkit ![version](https://img.shields.io/github/v/tag/Accenture/Spartacus?label=version&style=flat-square)
 
+## TLDR Quick Start:
+Put procmon somewhere you can run and access it then run the following:
+```
+.\Spartacus.exe --procmon C:\Users\user\Desktop\Procmon64.exe --pml test.plm --csv ./output.csv --exports . --verbose
+```
+
 ## Why "Spartacus"?
 
 If you have seen the film Spartacus from 1960, you will remember the scene where the Romans are asking for Spartacus to give himself up. The moment the real Spartacus stood up, a lot of others stood up as well and claimed to be him using the "I AM SPARTACUS" phrase.
