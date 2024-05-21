@@ -1,6 +1,3 @@
-> [!CAUTION]
-> This repo is unmaintained, visit https://github.com/sadreck/Spartacus for the latest version.
-
 # Spartacus DLL/COM Hijacking Toolkit ![version](https://img.shields.io/github/v/tag/Accenture/Spartacus?label=version&style=flat-square)
 
 ## TLDR Quick Start:
@@ -12,9 +9,9 @@ If you don't have procmon you can acquire it using `wget http://live.sysinternal
 
 ## Why "Spartacus"?
 
-If you have seen the 1960 film Spartacus, you will remember the scene where the Romans ask Spartacus to give himself up. The moment the real Spartacus stood up, many others stood up as well and claimed to be him, using the "I AM SPARTACUS" phrase.
+If you have seen the 1960 film Spartacus, you will remember the scene where the Romans ask Spartacus to give himself up. The moment the real Spartacus stood up, many others also claimed to be him, using the "I AM SPARTACUS" phrase.
 
-When a process that is vulnerable to DLL Hijacking asks for a DLL to be loaded, it's kind of asking, "WHO IS VERSION.DLL?" Random directories start claiming "I AM VERSION.DLL" and "NO, I AM VERSION.DLL." Thus, Spartacus.
+When a process that is vulnerable to DLL Hijacking asks for a DLL to be loaded, it asks, "WHO IS VERSION.DLL?" Random directories start claiming "I AM VERSION.DLL" and "NO, I AM VERSION.DLL." Thus, Spartacus.
 
 ## How is this tool different from all other hijacking tools?
 
