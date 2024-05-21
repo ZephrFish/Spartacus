@@ -4,26 +4,27 @@
 # Spartacus DLL/COM Hijacking Toolkit ![version](https://img.shields.io/github/v/tag/Accenture/Spartacus?label=version&style=flat-square)
 
 ## TLDR Quick Start:
-Put procmon somewhere you can run and access it then run the following:
+Put procmon somewhere you can run and access it, then run the following:
 ```
-.\Spartacus.exe --procmon C:\Users\user\Desktop\Procmon64.exe --pml test.plm --csv ./output.csv --exports . --verbose
+.\Spartacus.exe --mode dll --procmon C:\Users\user\Desktop\Procmon64.exe --pml test.plm --csv ./output.csv --exports . --verbose
 ```
+If you don't have procmon you can acquire it using `wget http://live.sysinternals.com/Procmon64.exe -o Procmon.exe`
 
 ## Why "Spartacus"?
 
-If you have seen the film Spartacus from 1960, you will remember the scene where the Romans are asking for Spartacus to give himself up. The moment the real Spartacus stood up, a lot of others stood up as well and claimed to be him using the "I AM SPARTACUS" phrase.
+If you have seen the 1960 film Spartacus, you will remember the scene where the Romans ask Spartacus to give himself up. The moment the real Spartacus stood up, many others stood up as well and claimed to be him, using the "I AM SPARTACUS" phrase.
 
-When a process that is vulnerable to DLL Hijacking is asking for a DLL to be loaded, it's kind of asking "WHO IS VERSION.DLL?" and random directories start claiming "I AM VERSION.DLL" and "NO, I AM VERSION.DLL". And thus, Spartacus.
+When a process that is vulnerable to DLL Hijacking asks for a DLL to be loaded, it's kind of asking, "WHO IS VERSION.DLL?" Random directories start claiming "I AM VERSION.DLL" and "NO, I AM VERSION.DLL." Thus, Spartacus.
 
-## How is this tool different to all the other hijacking tools out there?
+## How is this tool different from all other hijacking tools?
 
-* Spartacus automates most of the process. It parses raw [SysInternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) logs, and you can leave ProcMon running for hours and discover 2nd and 3rd level DLL/COM hijacking vulnerabilities (ie an app that loads another DLL that loads yet another DLL when you use a specific feature of the parent app).
+* Spartacus automates most of the process. It parses raw [SysInternals Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) logs, and you can leave ProcMon running for hours and discover 2nd and 3rd level DLL/COM hijacking vulnerabilities (i.e. an app that loads another DLL that loads yet another DLL when you use a specific feature of the parent app).
 * Automatically generate Visual Studio solutions for vulnerable DLLs.
 * Able to process large PML files and store all events of interest output into a CSV file. Local benchmark processed a 3GB file with 8 million events in 45 seconds.
 * Supports scanning for both DLL and COM hijacking vulnerabilities.
 * Supports generating self-signed certificates and signing DLL files.
 * By utilising [Ghidra](https://github.com/NationalSecurityAgency/ghidra) functionality, extract export function signatures and execute your payload via individually proxied functions instead of running everything from `DllMain`. This technique was inspired and implemented from the walkthrough described at https://www.redteam.cafe/red-team/dll-sideloading/dll-sideloading-not-by-dllmain, by [Shantanu Khandelwal](https://twitter.com/shantanukhande).
-* `[Defence]` Monitoring mode trying to identify running applications proxying calls, as in "DLL Hijacking in progress". This is just to get any low hanging fruit and should not be relied upon.
+* `[Defence]` Monitoring mode is trying to identify running applications proxying calls, as in "DLL Hijacking in progress". This is to get any low-hanging fruit and should not be relied upon.
 
 # Table of Contents
 
@@ -44,7 +45,7 @@ When a process that is vulnerable to DLL Hijacking is asking for a DLL to be loa
 
 # Installation
 
-Find and download the latest version of Spartacus under [Releases](https://github.com/Accenture/Spartacus/releases). Otherwise simply clone this repository and build from source.
+Find and download the latest version of Spartacus under [Releases](https://github.com/Accenture/Spartacus/releases). Otherwise, simply clone this repository and build from source.
 
 # Supported Functionality
 
@@ -56,23 +57,23 @@ Below is a description of each of the modes that Spartacus supports.
 
 The original functionality of Spartacus was solely finding DLL hijacking vulnerabilities. The way it works is:
 
-1. Generate a ProcMon (PMC) config file on the fly, based on the arguments passed. The filters that will be set are:
+1. Generate a ProcMon (PMC) config file on the fly based on the arguments passed. The filters that will be set are:
     * Operation is `CreateFile`.
     * Path ends with `.dll`.
     * Process name is not `procmon.exe` or `procmon64.exe`.
     * Enable `Drop Filtered Events` to ensure minimum PML output size.
     * Disable `Auto Scroll`.
 2. Execute Process Monitor and halt until the user presses `ENTER`.
-3. User runs/terminates processes, or leave it running for as long as they require.
+3. The user runs/terminates processes or leaves them running for as long as they require.
 4. Terminates Process Monitor upon the user pressing `ENTER`.
 5. Parses the output Event Log (PML) file.
-    1. Creates a CSV file with all the NAME_NOT_FOUND and PATH_NOT_FOUND DLLs.
+    1. Create a CSV file with all the NAME_NOT_FOUND and PATH_NOT_FOUND DLLs.
     2. Compares the DLLs from above and tries to identify the DLLs that were actually loaded.
-    3. For every "found" DLL it generates a Visual Studio solution for proxying all of the identified DLL's export functions.
+    3. Every "found" DLL generates a Visual Studio solution for proxying the identified DLL's export functions.
 
 ### DLL Hijacking Usage
 
-Collect all events and save them into `C:\Data\logs.pml`. All vulnerable DLLs will be saved as `C:\Data\VulnerableDLLFiles.csv` and all proxy DLLs solutions in `C:\Data\Solutions`.
+Collect all events and save them into `C:\Data\logs.pml`. All vulnerable DLLs will be saved as `C:\Data\VulnerableDLLFiles.csv` and all proxy DLL solutions in `C:\Data\Solutions`.
 
 ```
 --mode dll --procmon C:\SysInternals\Procmon.exe --pml C:\Data\logs.pml --csv C:\Data\VulnerableDLLFiles.csv --solution C:\Data\Solutions --verbose
@@ -100,7 +101,7 @@ A new functionality of Spartacus is to identify local COM hijacking vulnerabilit
     * Enable `Drop Filtered Events` to ensure minimum PML output size.
     * Disable `Auto Scroll`.
 2. Execute Process Monitor and halt until the user presses `ENTER`.
-3. User runs/terminates processes, or leave it running for as long as they require.
+3. The user runs/terminates processes or leaves them running for as long as they require.
 4. Terminates Process Monitor upon the user pressing `ENTER`.
 5. Parses the output Event Log (PML) file.
     1. Identifies all missing registry keys that end in `InprocServer32` and its result is `NAME_NOT_FOUND`.
@@ -108,10 +109,10 @@ A new functionality of Spartacus is to identify local COM hijacking vulnerabilit
     3. Create a CSV output with all the gathered information.
 6. Spartacus doesn't automatically create a Visual Studio solution for COM hijacking, however if you need to create a proxy DLL you can use the `proxy` mode.
 
-For COM hijacking Spartacus also supports scanning the local system for misconfigured COM entries:
+For COM hijacking, Spartacus also supports scanning the local system for misconfigured COM entries:
 
 1. Enumerate all of `HKEY_CLASSES_ROOT`, `HKEY_CURRENT_USER`, and `HKEY_LOCAL_MACHINE`.
-2. Look for registry keys that are called `InProcServer`, `InProcServer32`, `LocalServer`, or `LocalServer32`.
+2. Look for registry keys called `InProcServer`, `InProcServer32`, `LocalServer`, or `LocalServer32`.
 3. Identify any missing EXE/DLL locations, along with any ACL misconfiguration such as the ability to Modify or Delete the file by the current user.
 
 ### COM Hijacking Usage
@@ -145,11 +146,11 @@ Enumerate the local system registry to identify missing/misconfigured COM librar
 Spartacus supports generating Visual Studio solutions by creating skeleton projects for you to use, based on the DLL you wish to exploit.
 
 * Redirecting all calls by exporting functions back to the legitimate DLL.
-    * This means that you will have to execute your payload from the `DllMain` function.
+    * This means you must execute your payload using the `DllMain` function.
 * Using Ghidra, extract as many function signatures/definitions as possible from the target DLL, and create proxy functions for these.
-    * For any function that extracting its signature was not possible, it will be directly redirected to the legitimate function/dll.
+    * Any function that extracting its signature was not possible will be directly redirected to the legitimate function/dll.
     * This means you can execute your payload from a function outside of `DllMain`.
-    * For instance, if you wish to exploit `version.dll` you could run your implant from `GetFileVersionInfoExW` if that function is called by the vulnerable application.
+    * For instance, if you wish to exploit `version.dll,` you could run your implant from `GetFileVersionInfoExW` if the vulnerable application calls that function.
 
 ### DLL Proxy Generation Usage
 
@@ -233,12 +234,12 @@ To use this feature, simply run Spartacus with `--detect`.
 
 ## Self-Signing Executables/DLLs
 
-Spartacus supports the `--sign` mode which allows you to both generate self-signed certificates, but also sign compiled DLLs with them.
+Spartacus supports the `--sign` mode which allows you to both generate self-signed certificates, and sign compiled DLLs with them.
 
-Generate a self-signed certificate, copying the Issuer/Subject from an existing file:
+Generate a self-signed certificate, copying the Issuer/Subject fr,om an existing file:
 
 ```
---mode sign --action generate --pfx "C:\Output\myCertificate.pfx" --password "Welcome1" --not-before "2023-01-01 00:00:04" --not-after "2025-01-01 00:00:42" --copy-from C:\Windows\System32\version.dll --verbose
+--mode sign --action generate --px "C:\Output\myCertificate.pfx" --password "Welcome1" --not-before "2023-01-01 00:00:04" --not-after "2025-01-01 00:00:42" --copy-from C:\Windows\System32\version.dll --verbose
 ```
 
 And use that certificate to sign your compiled file:
@@ -276,18 +277,18 @@ To make your life easier, use the [CommandLineGenerator.html](CommandLineGenerat
 | `sign`            | `--subject`               | Used with `--action generate` to specify the certificate subject. |
 | `sign`            | `--issuer`                | Used with `--action generate` to specify the certificate's issuer. |
 | `sign`            | `--copy-from`             | Used with `--action generate` to specify an existing signed file to copy the Issuer and Subject from. |
-| `sign`            | `--not-before`            | Used with `--action generate` to define the date from when the new certificate will be valid from, format is YYYY-MM-DD HH:MM:SS. |
-| `sign`            | `--not-after`             | Used with `--action generate` to define the date from when the new certificate will be valid until, format is YYYY-MM-DD HH:MM:SS. |
+| `sign`            | `--not-before`            | Used with `--action generate` to define the date from when the new certificate will be valid; format is YYYY-MM-DD HH:MM:SS. |
+| `sign`            | `--not-after`             | Used with `--action generate` to define the date from when the new certificate will be valid until the format is YYYY-MM-DD HH:MM:SS. |
 | `sign`            | `--pfx`                   | When used with `--action generate` this is where the pfx file will be saved as. When used with `--action sign` this is where the pfx file will be loaded from. |
 | `sign`            | `--password`              | When used with `--action generate` it defines the password for the `--pfx` file. |
-| `sign`            | `--path`                  | When used with `--action sign` it defines the location of the executable/DLL file to be signed. |
+| `sign`            | `--path`                  | When used with `--action sign`, it defines the location of the executable/DLL file to be signed. |
 | `sign`            | `--algorithm`             | When used with `--action sign` it defines the hashing algorithm that will be used for signing. Options are: MD5, SHA1, SHA256, SHA384, SHA512. |
 | `sign`            | `--timestamp`             | When used with `--action sign` it defines the Timestamp Server, like http://timestamp.sectigo.com or http://timestamp.digicert.com. |
 
 # Contributions
 Whether it's a typo, a bug, or a new feature, Spartacus is very open to contributions as long as we agree on the following:
-* You are OK with the MIT license of this project.
-* Before creating a pull request, create an issue so it could be discussed before doing any work as internal development is not tracked via the public GitHub repository. Otherwise you risk having a pull request rejected if for example we are already working on the same/similar feature, or for any other reason.
+* You are OK with the MIT license for this project.
+* Before creating a pull request, create an issue so it can be discussed before doing any work, as internal development is not tracked via the public GitHub repository. Otherwise, you risk having a pull request rejected if, for example, we are already working on the same/similar feature or for any other reason.
 
 # Credits
 
